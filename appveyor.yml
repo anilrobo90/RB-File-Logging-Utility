@@ -3,7 +3,6 @@ configuration:
 - Debug
 - Release
 platform:
-- x86
 - Any CPU
 build:
   verbosity: detailed
