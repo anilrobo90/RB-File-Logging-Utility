@@ -3,7 +3,6 @@ configuration:
 - Debug
 - Release
 platform:
-- x86
 - Any CPU
 build:
   verbosity: detailed
@@ -22,6 +21,7 @@ deploy:
   artifact: RBUtility            
   draft: false
   prerelease: false
+  skip_tags: true
   on:
     branch: master                 # release from master branch only
-    APPVEYOR_REPO_TAG: true        # deploy on tag push only    
+    APPVEYOR_REPO_TAG: false       # do not deploy on tag push
