@@ -23,5 +23,4 @@ deploy:
   prerelease: false
   tag: $(APPVEYOR_REPO_TAG_NAME)
   on:
-    branch: master                 # release from master branch only
-    APPVEYOR_REPO_TAG: false        # deploy on tag push only    
+    branch: master                 # release from master branch only  
