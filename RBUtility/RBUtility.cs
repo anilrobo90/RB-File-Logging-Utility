@@ -5,7 +5,7 @@ using System.Text;
 
 namespace RBUtility
 {
-    public class RBUtility
+    public static class RBUtility
     {
         public static void WriteLog(string strMessage, string LogFileName = "RBUtility")
         {
@@ -44,26 +44,42 @@ namespace RBUtility
         {
             string ConnectionString = string.Empty;
 
-            string C_ServerName = ReadLine(IniFileName);
+            string[] readlines = ReadLine(IniFileName, '=', 4).Split('=');
 
-            string C_DbName = ReadLine(IniFileName);
+            string C_ServerName = readlines[0];
 
-            string userName = ReadLine(IniFileName);
+            string C_DbName = readlines[1];
 
-            string password = ReadLine(IniFileName);
+            string userName = readlines[2];
+
+            string password = readlines[3];
 
             ConnectionString = "Data Source=" + C_ServerName + ";initial catalog=" + C_DbName + ";user Id=" + userName + ";password=" + password + "";
 
             return ConnectionString;
         }
 
-        public static string ReadLine(string file_name, char separator = '=')
+        public static string ReadLine(string file_name, char separator = '=', int no_of_lines = 1)
         {
             using (StreamReader file = new StreamReader(file_name))
             {
-                return file.ReadLine().Split(separator)[1].ToString();
-            }
+                if (no_of_lines == 1)
+                {
+                    return file.ReadLine().Split(separator)[1].ToString();
+                }
 
+                else
+                {
+                    string data = file.ReadToEnd();
+                    string[] lines = data.Split(new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
+                    StringBuilder ret_values = new StringBuilder();
+                    for (int i = 0; i < lines.Length; i++)
+                    {
+                        ret_values.Append(lines[i].Split(separator)[1]).Append(separator);
+                    }
+                    return ret_values.ToString();
+                }
+            }
         }
     }
 
