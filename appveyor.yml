@@ -1,0 +1,27 @@
+version: 1.0.{build}
+configuration:
+- Debug
+- Release
+platform:
+- x86
+- Any CPU
+build:
+  verbosity: detailed
+  parallel: true
+matrix:
+  fast_finish: true
+artifacts:
+  - path: RBUtility\bin\Release\*.dll
+    name: RBUtility
+deploy:
+  release: RBUtility-v$(appveyor_build_version)
+  description: 'Library for Logging'
+  provider: GitHub
+  auth_token:
+    secure: c1lppUbVvWNp/mr8QaTpCnlWU0d56XzMV1ga5LkGlekIQnMUUkDFbi5mM/8+ukyy
+  artifact: RBUtility            
+  draft: false
+  prerelease: false
+  on:
+    branch: master                 # release from master branch only
+    APPVEYOR_REPO_TAG: true        # deploy on tag push only    
