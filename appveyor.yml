@@ -4,8 +4,10 @@ configuration:
 - Release
 platform:
 - Any CPU
+before_build:
+- cmd: msbuild -t:restore
 build:
-  verbosity: detailed
+  verbosity: minimal
   parallel: true
 matrix:
   fast_finish: true
