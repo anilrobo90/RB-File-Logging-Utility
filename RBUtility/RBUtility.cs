@@ -1,22 +1,27 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Text;
 
-
 namespace RBUtility
 {
-    public static class RBUtility
+    public static class Utils
     {
+        /// <summary>
+        /// Writes Message/Data to the Log File.
+        /// </summary>
+        /// <param name="strMessage"> Message to be written to the log File.</param>
+        /// <param name="LogFileName">Name and location of the log file. Default name is "RBUtility"</param>
         public static void WriteLog(string strMessage, string LogFileName = "RBUtility")
         {
-            string Dt4 = DateTime.Now.AddDays(-2).ToString("dd/MM/yyyy").Substring(0, 2);
+            string Dt4 = DateTime.Now.AddDays(-2).ToString("dd/MM/yyyy",CultureInfo.InvariantCulture).Substring(0, 2);
             StringBuilder fileFormat = new StringBuilder();
 
             fileFormat.Append(AppDomain.CurrentDomain.BaseDirectory);
             fileFormat.Append("\\" + LogFileName + "Log");
-            fileFormat.Append(DateTime.Now.AddDays(-2).ToString("dd/MM/yyyy").Substring(0, 2));
-            fileFormat.Append(DateTime.Now.AddDays(-2).ToString("dd/MM/yyyy").Substring(3, 2));
-            fileFormat.Append(DateTime.Now.AddDays(-2).ToString("dd/MM/yyyy").Substring(6, 4));
+            fileFormat.Append(DateTime.Now.AddDays(-2).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture).Substring(0, 2));
+            fileFormat.Append(DateTime.Now.AddDays(-2).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture).Substring(3, 2));
+            fileFormat.Append(DateTime.Now.AddDays(-2).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture).Substring(6, 4));
             fileFormat.Append(".log");
 
             if (File.Exists(fileFormat.ToString()))
@@ -28,18 +33,31 @@ namespace RBUtility
 
             fileFormat.Append(AppDomain.CurrentDomain.BaseDirectory);
             fileFormat.Append("\\" + LogFileName + "Log");
-            fileFormat.Append(DateTime.Now.Date.ToString("dd/MM/yyyy").Substring(0, 2));
-            fileFormat.Append(DateTime.Now.Date.ToString("dd/MM/yyyy").Substring(3, 2));
-            fileFormat.Append(DateTime.Now.Date.ToString("dd/MM/yyyy").Substring(6, 4));
+            fileFormat.Append(DateTime.Now.Date.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture).Substring(0, 2));
+            fileFormat.Append(DateTime.Now.Date.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture).Substring(3, 2));
+            fileFormat.Append(DateTime.Now.Date.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture).Substring(6, 4));
             fileFormat.Append(".log");
 
-            using (System.IO.StreamWriter file = new System.IO.StreamWriter(fileFormat.ToString(), true))
+            /// <exception cref="IOException"></exception>
+            using (StreamWriter file = new StreamWriter(fileFormat.ToString(), true))
             {
                 file.AutoFlush = false;
                 file.WriteLine(System.DateTime.Now.TimeOfDay.ToString().Substring(0, 5) + " " + strMessage);
             }
         }
 
+        /// <summary>
+        /// Creates a Connection string for MSSQL Server connection.
+        /// This function exepects the configuration file to be written in this order
+        /// Server Name
+        /// Database Name
+        /// Username
+        /// Password
+        /// 
+        /// The username and password are to be written as plaintext, in future it will be encrypted.
+        /// </summary>
+        /// <param name="IniFileName"> Configuration file where all the configurtaion parameters are mentioned in prescribed format.</param>
+        /// <returns>Configration file in MSSQL format.</returns>
         public static string CreateDBconnectionString(string IniFileName)
         {
             string ConnectionString = string.Empty;
@@ -59,13 +77,22 @@ namespace RBUtility
             return ConnectionString;
         }
 
-        public static string ReadLine(string file_name, char separator = '=', int no_of_lines = 1)
+        /// <summary>
+        /// This function is used to read configuration from a File. 
+        /// The function assumes that each configuration is followed by new line "\r\n"
+        /// </summary>
+        /// <param name="file_name"> Name Of The File along with the location of the file. </param>
+        /// <param name="separator"> Separator to used to separate config files.  Default separator is "="</param>
+        /// <param name="no_of_lines"> No of configuration Lines present in the file. Default value is 1 </param>
+        /// <returns>Contents from the configuration filealong with added separator to distinguish betwwen configuration parameters.</returns>
+        public static string ReadLine(string fileName, char separator = '=', int noOfLines = 1)
         {
-            using (StreamReader file = new StreamReader(file_name))
+            /// <exception cref="FileNotFoundException"></exception>
+            using (StreamReader file = new StreamReader(fileName))
             {
-                if (no_of_lines == 1)
+                if (noOfLines == 1)
                 {
-                    return file.ReadLine().Split(separator)[1].ToString();
+                    return file.ReadLine().Split(separator)[1].ToString(CultureInfo.InvariantCulture);
                 }
 
                 else
