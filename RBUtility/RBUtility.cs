@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Security.Cryptography;
 
 namespace RBUtility
 {
@@ -107,6 +108,25 @@ namespace RBUtility
                     return ret_values.ToString();
                 }
             }
+        }
+
+        /// <summary>
+        ///  Creates a SHA2 512 bit hash
+        /// </summary>
+        /// <param name="Phrase"> string to be encrypted</param>
+        /// <returns>SHA2 Hash without equals</returns>
+        public static string CreateSHA2Hash(string Phrase)
+        {
+            Byte[] PhraseAsByte;
+            Byte[] EncryptedBytes;
+            using (SHA512Managed HashTool = new SHA512Managed())
+            {
+                PhraseAsByte = System.Text.Encoding.UTF8.GetBytes(string.Concat(Phrase));
+                EncryptedBytes = HashTool.ComputeHash(PhraseAsByte);
+                HashTool.Clear();
+            }
+
+            return Convert.ToBase64String(EncryptedBytes).Replace("==","");
         }
     }
 
